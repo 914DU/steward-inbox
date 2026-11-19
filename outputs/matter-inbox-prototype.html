@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f6f7fb" />
+  <title>大總管｜事項收件測試</title>
+  <style>
+    :root { --ink:#18202f; --muted:#687386; --line:#e6e9f0; --paper:#fff; --bg:#f6f7fb; --blue:#465be9; --blue-pale:#edf0ff; --amber:#a96000; --amber-pale:#fff4df; --green:#176b50; --green-pale:#e8f6ef; --shadow:0 10px 30px rgba(25,34,63,.08); }
+    * { box-sizing:border-box; } body { margin:0; color:var(--ink); background:var(--bg); font:16px/1.5 system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif; }
+    button,textarea,select { font:inherit; } button { cursor:pointer; border:0; }
+    .app { max-width:720px; margin:auto; padding:calc(18px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom)); }
+    header { display:flex; align-items:center; justify-content:space-between; margin:0 2px 20px; } h1 { font-size:21px; letter-spacing:-.4px; margin:0; } .sub { color:var(--muted); font-size:13px; }
+    .roles { display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:8px; margin:0 0 16px; align-items:stretch; } .role { border:1px solid var(--line); background:#fff; border-radius:14px; padding:11px 8px; text-align:center; color:var(--ink); } .role strong,.role span { display:block; } .role strong { font-size:14px; } .role span { font-size:12px; margin-top:3px; color:var(--muted); } .role small { display:inline-block; min-width:20px; margin-top:5px; padding:1px 6px; border-radius:999px; background:#f0f2f6; color:#566174; font-weight:700; } .role.chief { border-color:#cbd2ff; background:var(--blue-pale); } .role.chief span { color:#4e5b88; } .role.team { cursor:pointer; } .role.team:focus,.role.team:hover { outline:2px solid #bfc8ff; outline-offset:1px; }
+    .units { background:#fff; border:1px solid var(--line); border-radius:15px; padding:13px 14px; margin:0 0 16px; } .units-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; } .units-head strong { font-size:14px; } .units-head span { font-size:12px; color:var(--muted); } .unit-list { display:grid; grid-template-columns:repeat(2,1fr); gap:7px; } .unit { text-align:left; background:#f7f8fc; color:#384456; border-radius:9px; padding:9px; font-size:13px; } .unit b { float:right; color:#596ad2; } .unit em { display:block; margin-top:3px; color:#778196; font-size:11px; font-style:normal; line-height:1.35; } 
+    .card { background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:18px; box-shadow:var(--shadow); } .intro { margin:0 0 14px; font-size:14px; color:var(--muted); }
+    textarea { width:100%; min-height:112px; resize:vertical; border:1px solid #d8dce7; border-radius:12px; padding:13px; color:var(--ink); outline-color:var(--blue); background:#fff; } textarea::placeholder { color:#9aa3b2; }
+    .actions { display:flex; align-items:center; gap:10px; margin-top:12px; } .primary { background:var(--blue); color:#fff; padding:11px 16px; border-radius:10px; font-weight:700; } .hint { color:var(--muted); font-size:12px; }
+    .toolbar { display:flex; gap:8px; align-items:center; justify-content:space-between; margin:26px 2px 12px; } h2 { margin:0; font-size:17px; } .filters { display:flex; gap:6px; overflow-x:auto; padding:2px; } .filter { white-space:nowrap; color:#566174; background:transparent; border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-size:13px; } .filter.active { background:var(--blue-pale); border-color:#cbd2ff; color:#3244bb; font-weight:700; }
+    #list { display:grid; gap:10px; } .item { background:#fff; border:1px solid var(--line); border-radius:15px; padding:14px; } .item-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; } .content { white-space:pre-wrap; font-size:15px; overflow-wrap:anywhere; } .meta { margin-top:10px; display:flex; flex-wrap:wrap; align-items:center; gap:7px; color:var(--muted); font-size:12px; } .pill { border-radius:999px; padding:3px 8px; font-weight:700; } .work { color:#3448c2; background:var(--blue-pale); } .life { color:var(--green); background:var(--green-pale); } .review { color:var(--amber); background:var(--amber-pale); } .status { color:#5a6475; background:#f0f2f6; }
+    .edit { color:#536174; background:#f4f5f8; border-radius:8px; padding:6px 9px; font-size:13px; white-space:nowrap; } .empty { text-align:center; color:var(--muted); padding:34px 16px; background:#fff; border:1px dashed #d9dee9; border-radius:15px; }
+    dialog { width:min(440px,calc(100% - 32px)); border:0; border-radius:18px; padding:0; box-shadow:0 25px 70px rgba(10,15,35,.25); } dialog::backdrop { background:rgba(16,24,40,.35); } .modal { padding:20px; } .modal h3 { margin:0 0 14px; } label { display:block; margin:13px 0 5px; color:#566174; font-size:13px; font-weight:700; } select { width:100%; padding:10px; border:1px solid #d8dce7; border-radius:9px; background:#fff; } .readonly { padding:10px; border-radius:9px; background:#f5f6f9; font-size:14px; white-space:pre-wrap; } .modal-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:20px; } .secondary { background:#f0f2f6; color:#3f4959; padding:10px 14px; border-radius:9px; }
+    .reset { color:#788397; background:none; padding:6px; font-size:12px; }
+    @media (min-width:640px) { .app { padding-top:38px; } .card { padding:22px; } }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header><div><h1>大總管收件匣</h1><div class="sub">小規模測試版・資料只儲存在此瀏覽器</div></div><button class="reset" id="reset">清除測試資料</button></header>
+    <section class="roles" aria-label="三位總管">
+      <button class="role team" data-team="work"><strong>工作總管</strong><span>工作事項</span><small id="workCount">0</small></button>
+      <div class="role chief"><strong>大總管</strong><span>唯一收件入口・初步分流</span></div>
+      <button class="role team" data-team="life"><strong>非工作總管</strong><span>生活與私人事項</span><small id="lifeCount">0</small></button>
+    </section>
+    <section class="units" aria-label="工作總管項目"><div class="units-head"><strong>工作總管的項目</strong><span>點選可篩選</span></div><div class="unit-list" id="unitList"></div></section>
+    <section class="card" aria-label="新增事項"><p class="intro">把想到的事直接交給大總管。系統只做初步判斷；不確定的事項會標成「待確認」。</p><textarea id="input" placeholder="例如：週五前整理客戶提案；或，下週幫媽媽預約看診"></textarea><div class="actions"><button class="primary" id="submit">送交大總管</button><span class="hint">保留原始輸入與收件時間</span></div></section>
+    <section><div class="toolbar"><h2>收件記錄</h2><div class="filters" id="filters"><button class="filter active" data-filter="all">全部</button><button class="filter" data-filter="review">待確認</button><button class="filter" data-filter="work">工作</button><button class="filter" data-filter="life">非工作</button></div></div><div id="list"></div></section>
+  </main>
+  <dialog id="editor"><form method="dialog" class="modal"><h3>查看與修改</h3><label>原始輸入</label><div class="readonly" id="original"></div><label for="category">分流對象</label><select id="category"><option value="work">工作總管</option><option value="life">非工作總管</option><option value="review">待確認</option></select><label for="unit">工作項目</label><select id="unit"><option value="">未指定工作項目</option></select><label for="state">狀態</label><select id="state"><option value="new">已收件</option><option value="doing">處理中</option><option value="done">已完成</option></select><div class="modal-actions"><button class="secondary" value="cancel">取消</button><button class="primary" id="save" value="default">儲存變更</button></div></form></dialog>
+  <script>
+    const KEY='steward-inbox-v1'; let items=JSON.parse(localStorage.getItem(KEY)||'[]'); let filter='all', unitFilter='', editing=null;
+    const units=[
+      {name:'轉角', note:'空間經營・行銷／經營／管理', aliases:['轉角'], areas:['行銷','經營','管理']},
+      {name:'914.music', note:'音樂教學・行銷／經營／管理', aliases:['914.music','914'], areas:['行銷','經營','管理']},
+      {name:'學校代課', note:'兼任學校音樂課', aliases:['學校代課','代課','學校音樂課'], areas:[]},
+      {name:'小宅音樂室', note:'籌備中的小型音樂教學地點', aliases:['小宅音樂室','小宅'], areas:[]}
+    ];
+    const workWords=['客戶','會議','提案','專案','報告','工作','同事','老闆','簡報','email','郵件','deadline','截止','發票','合約','公司','主管'];
+    const lifeWords=['媽媽','爸爸','家人','看診','醫生','買菜','採買','繳費','運動','旅行','朋友','生日','家裡','寵物','預約','回家'];
+    function classify(text){ const t=text.toLowerCase(); if(detectUnit(text))return 'work'; const w=workWords.filter(x=>t.includes(x.toLowerCase())).length, l=lifeWords.filter(x=>t.includes(x.toLowerCase())).length; if(w&&w>l)return 'work'; if(l&&l>w)return 'life'; return 'review'; }
+    function detectUnit(text){const t=text.toLowerCase(); const matched=units.find(u=>u.aliases.some(a=>t.includes(a.toLowerCase()))); if(matched)return matched.name; if(/學校|代課|班級|學生名單/.test(text))return '學校代課'; if(/小宅|音樂室籌備|教室籌備|小型教室/.test(text))return '小宅音樂室'; return '';}
+    function detectArea(text,unit){
+      if(unit==='914.music'){
+        if(/行銷|經營社群|社群|po文|貼文|拍片|剪片|影片/.test(text))return '行銷';
+        if(/管理|調課|排課|學費|繳費|通知繳納/.test(text))return '管理';
+        if(/經營|備課|上課記錄|課程記錄/.test(text))return '經營';
+      }
+      if(unit==='轉角'){
+        if(/行銷|社群經營|社群|po文|貼文/.test(text))return '行銷';
+        if(/管理|確認預約|預約確認|預約管理/.test(text))return '管理';
+        if(/經營|場地維護|設備|引導參觀|參觀場地|客戶需求|現場變更/.test(text))return '經營';
+      }
+      return '';
+    }
+    function save(){localStorage.setItem(KEY,JSON.stringify(items));}
+    function label(c){return c==='work'?'工作總管':c==='life'?'非工作總管':'待確認';} function stateLabel(s){return ({new:'已收件',doing:'處理中',done:'已完成'})[s];}
+    function time(d){return new Intl.DateTimeFormat('zh-TW',{dateStyle:'short',timeStyle:'short'}).format(new Date(d));}
+    function render(){ const shown=items.filter(x=>(filter==='all'||x.category===filter)&&(!unitFilter||x.unit===unitFilter)); document.querySelector('#workCount').textContent=items.filter(x=>x.category==='work').length; document.querySelector('#lifeCount').textContent=items.filter(x=>x.category==='life').length; document.querySelector('#unitList').innerHTML=units.map(u=>`<button class="unit" data-unit="${u.name}">${u.name}<b>${items.filter(x=>x.unit===u.name).length}</b><em>${u.note}</em></button>`).join(''); document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter)); const list=document.querySelector('#list'); if(!shown.length){list.innerHTML='<div class="empty">'+(items.length?'這個分類目前沒有事項。':'還沒有收件記錄。<br>從上方輸入第一件事開始測試吧。')+'</div>';return;} list.innerHTML=shown.map(x=>`<article class="item"><div class="item-top"><div class="content">${escape(x.text)}</div><button class="edit" data-id="${x.id}">查看／修改</button></div><div class="meta"><span class="pill ${x.category}">${label(x.category)}</span>${x.unit?`<span class="pill work">${x.unit}</span>`:''}${x.area?`<span class="pill work">${x.area}</span>`:''}<span class="pill status">${stateLabel(x.state)}</span><span>收件：${time(x.createdAt)}</span></div></article>`).join(''); }
+    function escape(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+    document.querySelector('#submit').onclick=()=>{const input=document.querySelector('#input'), text=input.value.trim();if(!text){input.focus();return;}const category=classify(text), unit=category==='work'?detectUnit(text):'';items.unshift({id:crypto.randomUUID(),text,category,unit,area:detectArea(text,unit),state:'new',createdAt:new Date().toISOString()});save();input.value='';filter='all';unitFilter='';render();};
+    document.querySelector('#input').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')document.querySelector('#submit').click();});
+    document.querySelector('#filters').onclick=e=>{if(e.target.dataset.filter){filter=e.target.dataset.filter;unitFilter='';render();}};
+    document.querySelector('.roles').onclick=e=>{const team=e.target.closest('[data-team]')?.dataset.team;if(team){filter=team;unitFilter='';render();document.querySelector('#list').scrollIntoView({behavior:'smooth',block:'start'});}};
+    document.querySelector('#unitList').onclick=e=>{const unit=e.target.closest('[data-unit]')?.dataset.unit;if(unit){filter='work';unitFilter=unit;render();document.querySelector('#list').scrollIntoView({behavior:'smooth',block:'start'});}};
+    document.querySelector('#list').onclick=e=>{const id=e.target.dataset.id;if(!id)return;editing=items.find(x=>x.id===id);document.querySelector('#original').textContent=editing.text;document.querySelector('#category').value=editing.category;document.querySelector('#unit').innerHTML='<option value="">未指定工作項目</option>'+units.map(u=>`<option value="${u.name}">${u.name}</option>`).join('');document.querySelector('#unit').value=editing.unit||'';document.querySelector('#state').value=editing.state;document.querySelector('#editor').showModal();};
+    document.querySelector('#save').onclick=e=>{e.preventDefault();editing.category=document.querySelector('#category').value;editing.unit=editing.category==='work'?document.querySelector('#unit').value:'';editing.area=editing.category==='work'?detectArea(editing.text,editing.unit):'';editing.state=document.querySelector('#state').value;save();document.querySelector('#editor').close();render();};
+    document.querySelector('#reset').onclick=()=>{if(confirm('確定清除這個瀏覽器中的全部測試資料？')){items=[];save();render();}}; render();
+  </script>
+</body>
+</html>
